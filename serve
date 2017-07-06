@@ -1,0 +1,54 @@
+#!/usr/bin/env perl6
+use HTTP::Server::Async;
+use HTTP::Server::Router;
+use DB::ORM::Quicky;
+use JSON::Fast;
+
+my HTTP::Server::Async $server .=new;
+my DB::ORM::Quicky     $orm    .=new(:debug, config => {
+  default-col-id => 'id', 
+  quote          => '',
+});
+
+$orm.connect(
+  driver  => 'Pg',
+  options => %(
+    database => 'tonyo',
+  ),
+);
+
+$server.handler: -> $req, $res {
+  try $req.params<body> = from-json $req.data.decode.substr(0,*-1);
+  True;
+};
+
+serve $server;
+
+route '/search/:term', -> $req, $res {
+  my %query = (
+    %(
+      module => ( '-like' => "\%{$req.params<term>}%" ),
+    ), 
+    %(
+      qw<author>.map({
+        $req.params<body>{$_}.defined 
+          ?? ($_ => ( '-like' => "\%{$req.params<body>{$_}}%" ) )
+          !! ();
+      })
+    )
+  );
+  my $search = $orm.search('version', %query);
+  my @results;
+  while $search.next -> $module {
+    @results.push(%(
+      qw<version version author author commit_id commit module module>.map(-> $db, $key {
+        $key => $module.get($db)
+      });
+    ));
+  }
+  $res.close(to-json(@results));
+};
+
+$server.listen(True);
+
+# vi:syntax=perl6

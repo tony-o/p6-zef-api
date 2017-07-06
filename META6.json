@@ -1,0 +1,16 @@
+{
+  "perl" : "6.*",
+  "name" : "ZPAN::API",
+  "version" : "1.0.0",
+  "description" : "zefPAN",
+  "auth" : "github:tony-o",
+  "depends" : [
+		"DBIish", 
+		"HTTP::Server::Async", 
+    "JSON::Tiny", 
+    "HTTP::Server::Router"
+  ],
+  "provides" : {
+  },
+  "source-url" : "git://github.com/tony-o/perl6-db-orm-quicky.git"
+}
