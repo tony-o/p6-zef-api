@@ -6,8 +6,10 @@
   "auth" : "github:tony-o",
   "depends" : [
 		"DBIish", 
+    "YAML::Parser::LibYAML",
 		"HTTP::Server::Async", 
-    "JSON::Tiny", 
+    "DB::ORM::Quicky",
+    "JSON::Fast", 
     "HTTP::Server::Router"
   ],
   "provides" : {

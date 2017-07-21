@@ -1,54 +1,37 @@
 #!/usr/bin/env perl6
 use HTTP::Server::Async;
-use HTTP::Server::Router;
-use DB::ORM::Quicky;
-use JSON::Fast;
+#use HTTP::Server::Router;
+#use JSON::Fast;
+
+use lib 'lib';
+use Zef::API::DB;
+use Zef::API::Middleware;
+use Zef::API::Routing;
 
 my HTTP::Server::Async $server .=new;
-my DB::ORM::Quicky     $orm    .=new(:debug, config => {
-  default-col-id => 'id', 
-  quote          => '',
-});
 
-$orm.connect(
-  driver  => 'Pg',
-  options => %(
-    database => 'tonyo',
-  ),
-);
+middleware $server;
+routing $server;
 
-$server.handler: -> $req, $res {
-  try $req.params<body> = from-json $req.data.decode.substr(0,*-1);
-  True;
-};
-
-serve $server;
-
-route '/search/:term', -> $req, $res {
-  my %query = (
-    %(
-      module => ( '-like' => "\%{$req.params<term>}%" ),
-    ), 
-    %(
-      qw<author>.map({
-        $req.params<body>{$_}.defined 
-          ?? ($_ => ( '-like' => "\%{$req.params<body>{$_}}%" ) )
-          !! ();
-      })
-    )
-  );
-  my $search = $orm.search('version', %query);
-  my @results;
-  while $search.next -> $module {
-    @results.push(%(
-      qw<version version author author commit_id commit module module>.map(-> $db, $key {
-        $key => $module.get($db)
-      });
-    ));
-  }
-  $res.close(to-json(@results));
-};
+#route '/register', -> $req, $res {
+#  my %response = status => 0, ;
+#
+#
+#  $res.close(to-json({
+#    status => 500,
+#    error  => 'Please provide JSON body for registration',
+#  })) unless $req.params<body-parsed>;
+#
+#  my %query =
+#    username => $req.params<body><username>,
+#    password => $req.params<body><password>,
+#    email    => $req.params<body><email>,
+#  ; 
+#   
+#  db.search('user', %query);
+#
+#  $res.close(to-json(%response));
+#};
 
 $server.listen(True);
-
 # vi:syntax=perl6

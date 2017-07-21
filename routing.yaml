@@ -1,0 +1,17 @@
+---
+paths:
+  /search:
+    controller: Zef::Controller::Search
+    sub:        search
+    parameters: 
+      - name: author
+        in:   body
+        description: auth to search for (like) 
+        optional:    true
+      - name: module
+        in:   body
+        description: module name (like)
+      - name: version
+        in:   body
+        description: module version to search (exact match)
+        optional:    true
