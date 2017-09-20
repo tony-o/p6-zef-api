@@ -1,17 +1,18 @@
 #!/usr/bin/env perl6
-use HTTP::Server::Async;
-#use HTTP::Server::Router;
-#use JSON::Fast;
 
 use lib 'lib';
-use Zef::API::DB;
-use Zef::API::Middleware;
-use Zef::API::Routing;
+use HTTP::Server::Middleware::JSON;
+use HTTP::Server::Router::YAML;
+use HTTP::Server::Async;
+
+#use Zef::API::Middleware;
+#use Zef::API::Routing;
 
 my HTTP::Server::Async $server .=new;
 
-middleware $server;
-routing $server;
+body-parse-json $server;
+serve $server;
+route-yaml 'routing.yaml', True;
 
 #route '/register', -> $req, $res {
 #  my %response = status => 0, ;

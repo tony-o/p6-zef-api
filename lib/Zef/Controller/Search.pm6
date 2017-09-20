@@ -1,8 +1,7 @@
+use HTTP::Server::Middleware::JSON;
 use Zef::Middleware::Validate;
-use Zef::Middleware::JSON::Parse;
 use Zef::API::DB;
 use JSON::Fast;
-use soft;
 
 unit module Zef::Controller::Search;
 

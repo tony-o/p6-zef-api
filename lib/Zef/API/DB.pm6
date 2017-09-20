@@ -12,7 +12,7 @@ $orm.connect(
   options => %(
     database => 'tonyo',
   ),
-);
+) or die 'Unable to connect to requested server';
 
 sub db is export {
   $orm;

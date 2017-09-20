@@ -15,3 +15,14 @@ paths:
         in:   body
         description: module version to search (exact match)
         optional:    true
+  /register:
+    controller: Zef::Controller::User
+    sub:        register
+    parameters:
+      - name: username
+        in:   body
+        description: username to register with
+      - name: password
+        in:   body
+      - name: email
+        in:   body
